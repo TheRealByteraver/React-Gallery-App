@@ -1,13 +1,17 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
-export default function MainNav(props) {
-    return (
-        <nav className="main-nav">
-            <ul>
-                <li><a href='#'>Cats</a></li>
-                <li><a href='#'>Dogs</a></li>
-                <li><a href='#'>Computers</a></li>
-            </ul>
-        </nav>    
-    );
+export default function MainNav({match}) {
+  return (
+    <nav className="main-nav">
+      <ul>
+        {/* <li><NavLink to={`${match.url}/cats`}>Cats</NavLink></li>
+        <li><NavLink to={`${match.url}/dogs`}>Dogs</NavLink></li>
+        <li><NavLink to={`${match.url}/computers`}>Computers</NavLink></li> */}
+        <li><NavLink to={`/cats`}>Cats</NavLink></li>
+        <li><NavLink to={`/dogs`}>Dogs</NavLink></li>
+        <li><NavLink to={`/computers`}>Computers</NavLink></li>
+      </ul>
+    </nav>  
+  );
 }
