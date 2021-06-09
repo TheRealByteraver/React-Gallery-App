@@ -9,9 +9,9 @@ import {
 // App components
 // import './App.css';
 import Home from './components/Home';
-import SearchForm from './components/SearchForm';
-import MainNav from './components/MainNav';
-import PhotoContainer from './components/PhotoContainer';
+// import SearchForm from './components/SearchForm';
+// import MainNav from './components/MainNav';
+// import PhotoContainer from './components/PhotoContainer';
 import apiKey from './config.js';
 
 export default class App extends Component {
@@ -42,16 +42,14 @@ export default class App extends Component {
   constructor() {
     super();
     this.state = {
-      imageCollections: [
-        { catPhotos: [] },
-        { dogPhotos: [] },
-        { computerPhotos: [] }
-      ],
+      imageCollections: [],
       loading: true
     };
   } 
 
-  // Use axios to do the search and return the Promise()
+  // Use axios to do the search and return the Promise().
+  // Parameter: a search tag
+  // Returns: an array with 24 urls to Flickr photos
   performFlickrSearch = (query = 'trending') => {
     return axios.get(this.getFlickrApiUrl(query))
       .then( (response) => response.data.photos.photo )
@@ -61,6 +59,7 @@ export default class App extends Component {
       });
   }
 
+  // Fetch the data for all four queries on first load
   componentDidMount() {
     Promise.all(
       [
@@ -70,13 +69,8 @@ export default class App extends Component {
         this.performFlickrSearch('computer')
       ])
       .then(data => {
-        // console.log('Array of results', data); 
         this.setState({
-          imageCollections: [
-            { catPhotos: [...data[1]] },
-            { dogPhotos: [...data[2]] },
-            { computerPhotos: [...data[3]] }
-          ],
+          imageCollections: data,
           loading: false    
         });
       })
@@ -85,25 +79,24 @@ export default class App extends Component {
       });
   }
 
-  render() {
+  // We always check if we're finished loading the data from the Flickr API
+  // Before we try to show any of the image collection
+  getImageCollection = (collectionNr) => {
+    return (this.state.loading) 
+    ? <h1>Loading...</h1> 
+    : <Home photoList={this.state.imageCollections[collectionNr]} />
+  }
 
+  render() {
     return (
       <div className="container">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" render=
-          { 
-            () => 
-            {
-              return (this.state.loading) 
-              ? <h1>Loading...</h1> 
-              : <Home photoList={this.state.imageCollections[0].catPhotos} />              
-            } 
-          } />
-          <Route path="/cats" render={ () => <Home photoList={this.state.imageCollections[0].catPhotos} /> } />
-          <Route path="/dogs" render={ () => <Home photoList={this.state.imageCollections[1].dogPhotos} /> } />
-          <Route path="/computers" render={ () => <Home photoList={this.state.imageCollections[2].computerPhotos} /> } />
-        </Switch>
+          <Route exact path="/" render={ () => this.getImageCollection(0) } />
+          <Route path="/cats" render={ () => this.getImageCollection(1) } />
+          <Route path="/dogs" render={ () => this.getImageCollection(2) } />
+          <Route path="/computers" render={ () => this.getImageCollection(3) } />
+       </Switch>
       </BrowserRouter>
       </div>
     );
