@@ -9,10 +9,13 @@ import {
 // App components
 // import './App.css';
 import Home from './components/Home';
+import Search from './components/Search';
+import apiKey from './config.js';
 // import SearchForm from './components/SearchForm';
 // import MainNav from './components/MainNav';
 // import PhotoContainer from './components/PhotoContainer';
-import apiKey from './config.js';
+
+const defaultSearches = ['cats', 'dogs', 'horses'];
 
 export default class App extends Component {
 
@@ -41,19 +44,36 @@ export default class App extends Component {
 
   constructor() {
     super();
+
+    this.imageCollections = [];
+
     this.state = {
-      imageCollections: [],
+      searchResult: [],
       loading: true
     };
   } 
 
   // Use axios to do the search and return the Promise().
   // Parameter: a search tag
-  // Returns: an array with 24 urls to Flickr photos
+  // Returns: a promise resolving to an array with 24 urls to Flickr photos
   performFlickrSearch = (query = 'trending') => {
     return axios.get(this.getFlickrApiUrl(query))
-      .then( (response) => response.data.photos.photo )
-      .then( (photos) => photos.map( photo => this.getFlickrImgUrl(photo)))
+      .then( response => response.data.photos.photo)
+      .then( photos => photos.map(photo => this.getFlickrImgUrl(photo)))
+      .catch( (error) => {
+        console.log('Error fetching and parsing data', error);
+      });
+  }
+
+  handleSearch = (query = 'trending') => {    
+    this.performFlickrSearch(query)  
+      .then( photos => {
+        this.setState({
+          searchResult: photos,
+          loading: false          
+        });
+        return photos;
+      })
       .catch( (error) => {
         console.log('Error fetching and parsing data', error);
       });
@@ -61,16 +81,11 @@ export default class App extends Component {
 
   // Fetch the data for all four queries on first load
   componentDidMount() {
-    Promise.all(
-      [
-        this.performFlickrSearch('trending'), 
-        this.performFlickrSearch('cat'),
-        this.performFlickrSearch('dog'),
-        this.performFlickrSearch('computer')
-      ])
+    Promise.all(defaultSearches.map( tag => this.performFlickrSearch(tag)))
       .then(data => {
+        this.imageCollections = data;
         this.setState({
-          imageCollections: data,
+          searchResult: [...this.imageCollections[0]],
           loading: false    
         });
       })
@@ -81,24 +96,40 @@ export default class App extends Component {
 
   // We always check if we're finished loading the data from the Flickr API
   // Before we try to show any of the image collection
-  getImageCollection = (collectionNr) => {
+  getImageCollection = (collection) => {
     return (this.state.loading) 
     ? <h1>Loading...</h1> 
-    : <Home photoList={this.state.imageCollections[collectionNr]} />
+    : <Home handleSearch={this.handleSearch} photoList={collection} />
   }
 
   render() {
     return (
-      <div className="container">
       <BrowserRouter>
-        <Switch>
-          <Route exact path="/" render={ () => this.getImageCollection(0) } />
-          <Route path="/cats" render={ () => this.getImageCollection(1) } />
-          <Route path="/dogs" render={ () => this.getImageCollection(2) } />
-          <Route path="/computers" render={ () => this.getImageCollection(3) } />
-       </Switch>
+        <div className="container">
+          <Switch>
+            {/* Main / route renders the 'Home' component */}
+            <Route exact path="/" 
+              render={ () => this.getImageCollection(this.state.searchResult) } />
+
+            {/* Routes for the default searches executed op initial load also
+                render the 'Home' component                                   */}
+            { defaultSearches.map((searchTag, index) => (
+                <Route key={index} path={`/${searchTag}`} render={ () => 
+                    this.getImageCollection(this.imageCollections[index]) } />))}
+
+            {/* Search route: */}
+            <Route path="/search/:query" render={ 
+              (props) => (<Search {...props} 
+                  handleSearch={this.handleSearch}
+                  currentSearchResult={this.state.searchResult}
+                />) }
+            />
+
+            {/* Default 404 Route:  */}
+
+          </Switch>
+        </div>
       </BrowserRouter>
-      </div>
     );
   }
 }
