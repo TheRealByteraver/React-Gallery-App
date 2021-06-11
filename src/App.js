@@ -99,7 +99,11 @@ export default class App extends Component {
   getImageCollection = (collection) => {
     return (this.state.loading) 
     ? <h1>Loading...</h1> 
-    : <Home handleSearch={this.handleSearch} photoList={collection} />
+    : <Home 
+        handleSearch={this.handleSearch} 
+        photoList={collection} 
+        mainNavItems={defaultSearches}
+      />
   }
 
   render() {
@@ -117,6 +121,7 @@ export default class App extends Component {
                       {...props} 
                       handleSearch={this.handleSearch} 
                       photoList={this.state.searchResult} 
+                      mainNavItems={defaultSearches}
                     />
                 // return this.getImageCollection(this.state.searchResult);
               }} />
@@ -131,7 +136,9 @@ export default class App extends Component {
             <Route path="/search/:query" render={ 
               (props) => (<Search {...props} 
                   handleSearch={this.handleSearch}
-                  currentSearchResult={this.state.searchResult}
+                  photoList={this.state.searchResult} 
+                  mainNavItems={defaultSearches}
+                  isLoading={this.state.loading}
                 />) }
             />
 

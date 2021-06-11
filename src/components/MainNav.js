@@ -1,16 +1,25 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-export default function MainNav({match}) {
+
+function capitalizeFirst(sourceString) {
+  return `${sourceString.substr(0, 1).toUpperCase()}${sourceString.slice(1)}`;
+}
+
+export default function MainNav(props) {
+
   return (
     <nav className="main-nav">
       <ul>
-        {/* <li><NavLink to={`${match.url}/cats`}>Cats</NavLink></li>
-        <li><NavLink to={`${match.url}/dogs`}>Dogs</NavLink></li>
-        <li><NavLink to={`${match.url}/computers`}>Computers</NavLink></li> */}
-        <li><NavLink to={`/cats`}>Cats</NavLink></li>
-        <li><NavLink to={`/dogs`}>Dogs</NavLink></li>
-        <li><NavLink to={`/computers`}>Computers</NavLink></li>
+        {
+          props.mainNavItems.map( (navItem, index) => 
+            <li key={index}>
+              <NavLink to={`/${navItem}`}>
+                {`${capitalizeFirst(navItem)}`}
+              </NavLink>
+            </li>  
+          )
+        }
       </ul>
     </nav>  
   );
