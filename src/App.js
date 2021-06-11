@@ -81,7 +81,7 @@ export default class App extends Component {
 
   // Fetch the data for all four queries on first load
   componentDidMount() {
-    Promise.all(defaultSearches.map( tag => this.performFlickrSearch(tag)))
+    Promise.all(defaultSearches.map(tag => this.performFlickrSearch(tag)))
       .then(data => {
         this.imageCollections = data;
         this.setState({
@@ -107,9 +107,19 @@ export default class App extends Component {
       <BrowserRouter>
         <div className="container">
           <Switch>
+
             {/* Main / route renders the 'Home' component */}
             <Route exact path="/" 
-              render={ () => this.getImageCollection(this.state.searchResult) } />
+              render={ (props) => {
+                return (this.state.loading) 
+                  ? <h1>Loading...</h1> 
+                  : <Home 
+                      {...props} 
+                      handleSearch={this.handleSearch} 
+                      photoList={this.state.searchResult} 
+                    />
+                // return this.getImageCollection(this.state.searchResult);
+              }} />
 
             {/* Routes for the default searches executed op initial load also
                 render the 'Home' component                                   */}

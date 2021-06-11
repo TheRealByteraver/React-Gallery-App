@@ -9,7 +9,7 @@ export default function Home(props) {
 
   return (
     <div>
-      <SearchForm handleSearch={props.handleSearch} />
+      <SearchForm {...props} handleSearch={props.handleSearch} />
       <MainNav />
       <PhotoContainer photoList={ props.photoList } />
     </div>

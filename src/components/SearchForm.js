@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
 class SearchForm extends Component {
 
@@ -10,9 +11,17 @@ class SearchForm extends Component {
     this.setState( { input: event.target.value } );
   }
 
-  handleSubmit = (event) => {
+  // handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   this.props.handleSearch(this.state.input);
+  // }
+
+ handleSubmit = (event) => {
     event.preventDefault();
-    this.props.handleSearch(this.state.input);
+    let path = `search/${this.state.input}`;
+    // push the path onto the history stack == redirect the user to 'path':
+    console.log('this.props: ', this.props);
+    this.props.history.push(path);    
   }
 
   render() {
