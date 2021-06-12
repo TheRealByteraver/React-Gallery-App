@@ -66,7 +66,11 @@ export default class App extends Component {
       });
   }
 
-  handleSearch = (query = 'trending') => {    
+  handleSearch = (query = 'trending') => { 
+    this.setState(prevState => ({
+      ...prevState,
+      loading: true          
+    }));
     this.performFlickrSearch(query)  
       .then(photos => {
         this.setState({

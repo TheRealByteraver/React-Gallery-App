@@ -13,16 +13,9 @@ class SearchForm extends Component {
  handleSubmit = (event) => {
     event.preventDefault();
     this.props.handleSearch(this.state.input);
-
-    // let path = `/search/${this.state.input}`;
-    // // push the path onto the history stack == redirect the user to 'path':
-    // this.props.history.push(path);     // error, props.history = undefined
-
-    // console.log('this.props: ',this.props);
   }
 
   render() {
-
     return (
       <form className="search-form" onSubmit={this.handleSubmit}>
         <input type="search" name="search" placeholder="Search" onChange={this.handleInputChange} value={this.state.input} required/>
