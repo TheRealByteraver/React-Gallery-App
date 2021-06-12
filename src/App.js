@@ -3,17 +3,18 @@ import axios from 'axios';
 import {
     BrowserRouter,
     Route,
-    Switch
+    Switch,
+    Redirect
   } from 'react-router-dom';
 
 // App components
 // import './App.css';
-import Home from './components/Home';
-import Search from './components/Search';
+// import Home from './components/Home';
+// import Search from './components/Search';
 import apiKey from './config.js';
-// import SearchForm from './components/SearchForm';
-// import MainNav from './components/MainNav';
-// import PhotoContainer from './components/PhotoContainer';
+import SearchForm from './components/SearchForm';
+import MainNav from './components/MainNav';
+import PhotoContainer from './components/PhotoContainer';
 
 const defaultSearches = ['cats', 'dogs', 'horses'];
 
@@ -58,16 +59,16 @@ export default class App extends Component {
   // Returns: a promise resolving to an array with 24 urls to Flickr photos
   performFlickrSearch = (query = 'trending') => {
     return axios.get(this.getFlickrApiUrl(query))
-      .then( response => response.data.photos.photo)
-      .then( photos => photos.map(photo => this.getFlickrImgUrl(photo)))
-      .catch( (error) => {
+      .then(response => response.data.photos.photo)
+      .then(photos => photos.map(photo => this.getFlickrImgUrl(photo)))
+      .catch((error) => {
         console.log('Error fetching and parsing data', error);
       });
   }
 
   handleSearch = (query = 'trending') => {    
     this.performFlickrSearch(query)  
-      .then( photos => {
+      .then(photos => {
         this.setState({
           searchResult: photos,
           loading: false          
@@ -94,53 +95,50 @@ export default class App extends Component {
       });
   }
 
-  // We always check if we're finished loading the data from the Flickr API
-  // Before we try to show any of the image collection
+  // We always check if we're finished loading the data from 
+  // the Flickr API before we try to show any of the image 
+  // collection
   getImageCollection = (collection) => {
     return (this.state.loading) 
     ? <h1>Loading...</h1> 
-    : <Home 
-        handleSearch={this.handleSearch} 
-        photoList={collection} 
-        mainNavItems={defaultSearches}
-      />
+    : <PhotoContainer photoList={ collection } /> 
   }
 
   render() {
     return (
       <BrowserRouter>
         <div className="container">
+          <SearchForm handleSearch={this.handleSearch} />
+          <MainNav mainNavItems={defaultSearches} />
           <Switch>
 
-            {/* Main / route renders the 'Home' component */}
+            {/* Main / route */}
             <Route exact path="/" 
-              render={ (props) => {
-                return (this.state.loading) 
+              render={ () => {
+                  //this.getImageCollection(this.state.searchResult);
+                  return (this.state.loading) 
                   ? <h1>Loading...</h1> 
-                  : <Home 
-                      {...props} 
-                      handleSearch={this.handleSearch} 
-                      photoList={this.state.searchResult} 
-                      mainNavItems={defaultSearches}
-                    />
-                // return this.getImageCollection(this.state.searchResult);
+                  : <PhotoContainer photoList={ this.state.searchResult } />        
               }} />
 
-            {/* Routes for the default searches executed op initial load also
-                render the 'Home' component                                   */}
+            {/* Routes for the default searches executed on initial load */}
             { defaultSearches.map((searchTag, index) => (
                 <Route key={index} path={`/${searchTag}`} render={ () => 
                     this.getImageCollection(this.imageCollections[index]) } />))}
 
-            {/* Search route: */}
-            <Route path="/search/:query" render={ 
-              (props) => (<Search {...props} 
-                  handleSearch={this.handleSearch}
-                  photoList={this.state.searchResult} 
-                  mainNavItems={defaultSearches}
-                  isLoading={this.state.loading}
-                />) }
-            />
+            {/* Search route */}
+            <Route path="/search/:query" 
+              render={ (props) => {
+                  // console.log('query: ', props.match.params.query);
+                  this.handleSearch(props.match.params.query);
+
+                  // without the following statement we are in that infernal loop again
+                  return <Redirect to="/" /> 
+
+                  // return (this.state.loading) 
+                  // ? <h1>Loading...</h1> 
+                  // : <PhotoContainer photoList={ this.state.searchResult } />        
+              }} />
 
             {/* Default 404 Route:  */}
 
