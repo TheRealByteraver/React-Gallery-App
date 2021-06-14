@@ -4,7 +4,8 @@ import {
     BrowserRouter,
     Route,
     Switch,
-    Redirect
+    Redirect,
+    NavLink
   } from 'react-router-dom';
 
 // App components
@@ -13,7 +14,7 @@ import {
 // import Search from './components/Search';
 import apiKey from './config.js';
 import SearchForm from './components/SearchForm';
-import MainNav from './components/MainNav';
+// import MainNav from './components/MainNav';
 import PhotoContainer from './components/PhotoContainer';
 
 const defaultSearches = ['cats', 'dogs', 'horses'];
@@ -45,9 +46,7 @@ export default class App extends Component {
 
   constructor() {
     super();
-
     this.imageCollections = [];
-
     this.state = {
       searchResult: [],
       loading: true
@@ -79,7 +78,7 @@ export default class App extends Component {
         });
         return photos;
       })
-      .catch( (error) => {
+      .catch((error) => {
         console.log('Error fetching and parsing data', error);
       });
   }
@@ -108,41 +107,34 @@ export default class App extends Component {
     : <PhotoContainer photoList={ collection } /> 
   }
 
+  // default preloaded searches = 'cats', 'dogs', 'horses'
   render() {
     return (
       <BrowserRouter>
         <div className="container">
           <SearchForm handleSearch={this.handleSearch} />
-          <MainNav mainNavItems={defaultSearches} />
+          <nav className="main-nav">
+            <ul>
+              <li><NavLink to="/cats">Cats</NavLink></li>
+              <li><NavLink to="/dogs">Dogs</NavLink></li>
+              <li><NavLink to="/horses">Horses</NavLink></li>
+            </ul>
+          </nav>
           <Switch>
-
-            {/* Main / route */}
             <Route exact path="/" 
-              render={ () => {
-                  //this.getImageCollection(this.state.searchResult);
-                  return (this.state.loading) 
-                  ? <h1>Loading...</h1> 
-                  : <PhotoContainer photoList={ this.state.searchResult } />        
-              }} />
+              render={ () => this.getImageCollection(this.state.searchResult) } />        
+            <Route path="/cats" render={ () => this.getImageCollection(this.imageCollections[0]) } />
+            <Route path="/dogs" render={ () => this.getImageCollection(this.imageCollections[1]) } />
+            <Route path="/horses" render={ () => this.getImageCollection(this.imageCollections[2]) } />
+            <Route path="/search/:query" render={ (props) => {
 
-            {/* Routes for the default searches executed on initial load */}
-            { defaultSearches.map((searchTag, index) => (
-                <Route key={index} path={`/${searchTag}`} render={ () => 
-                    this.getImageCollection(this.imageCollections[index]) } />))}
+              // this gives the error 
+              this.handleSearch(props.match.params.query);
 
-            {/* Search route */}
-            <Route path="/search/:query" 
-              render={ (props) => {
-                  // console.log('query: ', props.match.params.query);
-                  this.handleSearch(props.match.params.query);
-
-                  // without the following statement we are in that infernal loop again
-                  return <Redirect to="/" /> 
-
-                  // return (this.state.loading) 
-                  // ? <h1>Loading...</h1> 
-                  // : <PhotoContainer photoList={ this.state.searchResult } />        
-              }} />
+              // without the following statement we are in that infernal loop again
+              return <Redirect to="/" /> 
+  
+          }} />
 
             {/* Default 404 Route:  */}
 
