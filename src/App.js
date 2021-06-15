@@ -5,7 +5,8 @@ import {
     Route,
     Switch,
     Redirect,
-    NavLink
+    NavLink,
+    withRouter
   } from 'react-router-dom';
 
 // App components
@@ -16,6 +17,7 @@ import apiKey from './config.js';
 import SearchForm from './components/SearchForm';
 // import MainNav from './components/MainNav';
 import PhotoContainer from './components/PhotoContainer';
+import SearchRoute from './components/SearchRoute.js';
 
 const defaultSearches = ['cats', 'dogs', 'horses'];
 
@@ -126,15 +128,11 @@ export default class App extends Component {
             <Route path="/cats" render={ () => this.getImageCollection(this.imageCollections[0]) } />
             <Route path="/dogs" render={ () => this.getImageCollection(this.imageCollections[1]) } />
             <Route path="/horses" render={ () => this.getImageCollection(this.imageCollections[2]) } />
-            <Route path="/search/:query" render={ (props) => {
-
-              // this gives the error 
-              this.handleSearch(props.match.params.query);
-
-              // without the following statement we are in that infernal loop again
-              return <Redirect to="/" /> 
-  
-          }} />
+            <Route path="/search/:query" 
+              render={() =>
+                <SearchRoute handleSearch={this.handleSearch} state={this.state} /> 
+              } 
+            />
 
             {/* Default 404 Route:  */}
 
