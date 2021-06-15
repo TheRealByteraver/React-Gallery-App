@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Redirect,
+  // Redirect,
   withRouter
 } from 'react-router-dom';
 
@@ -30,7 +30,6 @@ class Search extends Component {
         customSearch: searchResult,
         customSearchLoaded: true
       }));
-      // console.log('this.state.customSearchLoaded = ', this.state.customSearchLoaded);
     })
     .catch((error) => {
       console.log('Error fetching and parsing data during App load', error);
@@ -38,14 +37,16 @@ class Search extends Component {
   }
 
   componentDidMount() {
-    console.log('<Search /> componentDidMount triggered');
+    // console.log('<Search /> componentDidMount triggered');
     this.handleSearch(this.props.match.params.query);
-    console.log('this.props.match.params.query: ', this.props.match.params.query);
-    this.props.history.push(`/search/${this.props.match.params.query}`); // cheating ;)
+    // console.log('this.props.match.params.query: ', this.props.match.params.query);
 
-    // the below also works well instead of the <Redirect to="/" /> 
-    // but has the same problem
-    // this.props.history.push("/");
+    // clean url history:
+    // this.props.history.pop(); 
+    // this.props.history.push(`/search/${this.props.match.params.query}`); 
+    this.props.history.replace(`/search/${this.props.match.params.query}`); 
+    // console.log('this.props.history: ', this.props.history);
+
   }
 
   render() {
@@ -57,23 +58,7 @@ class Search extends Component {
         : <h1>Loading...</h1>
       } 
       </div>
-);
-
-    // this does work but the browser history is lost for some reason
-    // return (
-    //   <Redirect to="/" />
-    // );
-
-    // this does not work, as 'this.props.isLoaded' does not get updated
-    // return (
-    //   <div>
-    //   {
-    //     this.props.isLoaded
-    //     ? <Gallery title={this.title} urlList={this.urlList} />
-    //     : <h1>Loading...</h1>
-    //   }        
-    //   </div>
-    // );
+    );
   }
 }
 

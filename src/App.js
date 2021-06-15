@@ -51,39 +51,16 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      customSearch: [],
+      fillerSearch: [],
       catsSearch: [],
       dogsSearch: [],
       horsesSearch: [],
-      // for the search functionality:
-      // customSearchTag: '',
-      // customSearchLoaded: false
+      isLoaded: false
     }
   }
 
-  handleSearch = (newSearchTag = '') => {
-    this.setState(prevState => ({
-      ...prevState,
-      customSearch: [],
-      customSearchTag: newSearchTag,
-      customSearchLoaded: false
-    }));
-    this.performFlickrSearch(newSearchTag)
-    .then(searchResult => {
-      this.setState(prevState => ({
-        ...prevState,
-        customSearch: searchResult,
-        customSearchLoaded: true
-      }));
-      console.log('this.state.customSearchLoaded = ', this.state.customSearchLoaded);
-    })
-    .catch((error) => {
-      console.log('Error fetching and parsing data during App load', error);
-    });
-  }
-
   componentDidMount() {
-    console.log('<App /> componentDidMount triggered');
+    // console.log('<App /> componentDidMount triggered');
     Promise.all([
       this.performFlickrSearch(),
       this.performFlickrSearch('cats'),
@@ -92,11 +69,11 @@ class App extends Component {
     ])
     .then(searchArray => {
       this.setState({
-        customSearch: searchArray[0],
+        fillerSearch: searchArray[0],
         catsSearch: searchArray[1],
         dogsSearch: searchArray[2],
         horsesSearch: searchArray[3],
-        customSearchLoaded: true
+        isLoaded: true
       });
     })
     .catch((error) => {
@@ -105,30 +82,38 @@ class App extends Component {
   }
   
   render() {
-    console.log('Re-render of App triggered');
+    // console.log('Re-render of App triggered');
 
     return (
       <BrowserRouter>
-        <div className="container" 
-          // onClick={() => console.log("search: ", this.state.customSearch) }
-        >
+        <div className="container">
           <SearchForm />
           <Nav />
           <Switch>
             <Route exact path="/" component=
               { () =>
-                (this.state.customSearchLoaded)
-                ? <Gallery title={this.state.customSearchTag} urlList={this.state.customSearch} />
+                (this.state.isLoaded)
+                ? <Gallery title="trending" urlList={this.state.fillerSearch} />
                 : <h1>Loading...</h1>
-              } 
-            />
-            <Route path="/cats" render=
-              { () => <Gallery title="Cats" urlList={this.state.catsSearch} /> } />
-            <Route path="/dogs" render=
-              { () => <Gallery title="Dogs" urlList={this.state.dogsSearch} /> } />
-            <Route path="/horses" render=
-              { () => <Gallery title="Horses" urlList={this.state.horsesSearch} /> } />
-
+              } />
+            <Route path="/cats" component=
+              { () =>
+                (this.state.isLoaded)
+                ? <Gallery title="Cats" urlList={this.state.catsSearch} />
+                : <h1>Loading...</h1>
+              } />
+            <Route path="/dogs" component=
+              { () =>
+                (this.state.isLoaded)
+                ? <Gallery title="Dogs" urlList={this.state.dogsSearch} />
+                : <h1>Loading...</h1>
+              } />
+            <Route path="/horses" component=
+              { () =>
+                (this.state.isLoaded)
+                ? <Gallery title="Horses" urlList={this.state.horsesSearch} />
+                : <h1>Loading...</h1>
+              } />
             <Route path="/search/:query" render=
               { () => <Search performFlickrSearch={this.performFlickrSearch} /> } />
             <Route component={ () =>
