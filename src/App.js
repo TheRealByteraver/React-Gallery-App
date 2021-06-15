@@ -51,13 +51,13 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      customSearch: [],
       catsSearch: [],
       dogsSearch: [],
       horsesSearch: [],
       // for the search functionality:
-      customSearch: [],
-      customSearchTag: '',
-      customSearchLoaded: false
+      // customSearchTag: '',
+      // customSearchLoaded: false
     }
   }
 
@@ -85,16 +85,17 @@ class App extends Component {
   componentDidMount() {
     console.log('<App /> componentDidMount triggered');
     Promise.all([
+      this.performFlickrSearch(),
       this.performFlickrSearch('cats'),
       this.performFlickrSearch('dogs'),
       this.performFlickrSearch('horses')
     ])
     .then(searchArray => {
       this.setState({
-        catsSearch: searchArray[0],
-        dogsSearch: searchArray[1],
-        horsesSearch: searchArray[2],
         customSearch: searchArray[0],
+        catsSearch: searchArray[1],
+        dogsSearch: searchArray[2],
+        horsesSearch: searchArray[3],
         customSearchLoaded: true
       });
     })
@@ -127,8 +128,9 @@ class App extends Component {
               { () => <Gallery title="Dogs" urlList={this.state.dogsSearch} /> } />
             <Route path="/horses" render=
               { () => <Gallery title="Horses" urlList={this.state.horsesSearch} /> } />
+
             <Route path="/search/:query" render=
-              { () => <Search handleSearch={this.handleSearch} /> } />
+              { () => <Search performFlickrSearch={this.performFlickrSearch} /> } />
             <Route component={ () =>
               <h1>404 - The requested route is not available</h1> } />
           </Switch>
