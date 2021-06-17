@@ -16,19 +16,16 @@ import UrlSearch from './components/UrlSearch';
 
 class App extends Component {
 
-  constructor() {
-    super();
-    this.state = {
-      customSearch: [],
-      // customSearchTag: 'trending',
-      catsSearch: [],
-      dogsSearch: [],
-      horsesSearch: [],
-      isLoaded: false
-    }
+  state = {
+    customSearch: [],
+    customSearchTag: '',
+    catsSearch: [],
+    dogsSearch: [],
+    horsesSearch: [],
+    isLoaded: false
   }
 
-  handleSearch = (newSearchTag = 'trending') => {
+  handleSearch = (newSearchTag) => {
     this.setState(prevState => ({
       ...prevState,
       customSearch: [],
@@ -50,18 +47,19 @@ class App extends Component {
 
   componentDidMount() {
     // console.log('<App /> componentDidMount triggered');
+
     Promise.all([
-      // performFlickrSearch(this.state.customSearchTag),
       performFlickrSearch('cats'),
       performFlickrSearch('dogs'),
       performFlickrSearch('horses')
+      // ,performFlickrSearch('trending')
     ])
     .then(searchArray => {
       this.setState({
-        // customSearch: searchArray[0],
         catsSearch: searchArray[0],
         dogsSearch: searchArray[1],
         horsesSearch: searchArray[2],
+        // fillerSearch: searchArray[3],
         isLoaded: true
       });
     })
@@ -70,15 +68,18 @@ class App extends Component {
     });
   }
   
+  // componentDidUpdate() {
+  //   console.log('<App /> componentDidUpdate triggered');
+  // }
+
   render() {
-    // console.log('Re-render of App triggered');
+    // console.log('<App /> render triggered');
 
     return (
       <BrowserRouter>
         <div className="container">
           <SearchForm handleSearch={this.handleSearch} />
           <Nav />
-
           <Switch>
             <Route exact path="/" component=
               { () =>

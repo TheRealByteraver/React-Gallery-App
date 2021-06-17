@@ -6,15 +6,16 @@ import GalleryItemNotFound from './GalleryItemNotFound.js';
 
 class Gallery extends Component {
   render() {
+
     return (
       <div className="photo-container">
         <h2>{this.props.title}</h2>
         <ul>
           {
-            (this.props.urlList.length > 0)
-            ? this.props.urlList.map((imgSrc,index) => 
+            (this.props.urlList.length === 0 && this.props.title.length !== 0)
+            ? <GalleryItemNotFound /> 
+            : this.props.urlList.map((imgSrc,index) => 
                     <GalleryItem key={index} src={imgSrc} /> )
-            : <GalleryItemNotFound /> 
           }          
         </ul>
       </div>

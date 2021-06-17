@@ -4,12 +4,23 @@ import { withRouter } from 'react-router-dom';
 class SearchForm extends Component {
 
   handleSubmit = (event) => {
+    // console.log('Starting Search from <SearchForm /> for ', this.searchTag.value);
     event.preventDefault(); 
     this.props.handleSearch(this.searchTag.value);
     let path=`/search/${this.searchTag.value}`;
     this.props.history.push(path);
     this.searchTag.value = '';
   }
+
+  // componentDidMount() {
+  //   console.log('<SearchForm /> componentDidMount triggered');
+  // }
+  
+  // componentDidUpdate() {
+  //   console.log('<SearchForm /> componentDidUpdate triggered');
+  //   // console.log('<SearchForm /> this.props.match: ', this.props.match);
+  //   // console.log('<SearchForm /> this.searchTag.value: ', this.searchTag.value);
+  // }
 
   render() {
     return (
