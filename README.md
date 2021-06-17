@@ -1,3 +1,13 @@
+# React Gallery App
+# Technology Stack
+FrontEnd: React (HTML / CSS / JavaScript)
+# Exceeds requirements description
+The exceeds requirements have been fulfilled as described. No special CSS changes were made.
+1. The app can be started with the 'npm start' command
+2. Non existing routes will give an error message, a loading... messsage is also present during the asynchronous fetch.
+
+... Wat follows is the default create-react-app README.md
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
