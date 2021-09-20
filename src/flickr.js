@@ -4,8 +4,6 @@ import axios from 'axios';
 // parameter: search term to query the Flickr api
 // returns: full Flickr query url
 function getFlickrApiUrl(query) {
-  console.log('environment: ', process.env);
-  console.log('API KEY: ', process.env.REACT_APP_FLICKR_API_KEY);
   const MaxImagesPerPage = 24;
   const apiUrl = `https://www.flickr.com/services/rest/`;
   const apiArgs = [
