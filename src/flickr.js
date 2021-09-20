@@ -1,14 +1,17 @@
 import axios from 'axios';
-import apiKey from './config.js';
+// import apiKey from './config.js';
 
 // parameter: search term to query the Flickr api
 // returns: full Flickr query url
 function getFlickrApiUrl(query) {
+  console.log('environment: ', process.env);
+  console.log('API KEY: ', process.env.REACT_APP_FLICKR_API_KEY);
   const MaxImagesPerPage = 24;
   const apiUrl = `https://www.flickr.com/services/rest/`;
   const apiArgs = [
     `method=flickr.photos.search`,
-    `api_key=${apiKey}`,
+    // `api_key=${apiKey}`,
+    `api_key=${process.env.REACT_APP_FLICKR_API_KEY}`,
     `tags=${query}`,
     `per_page=${MaxImagesPerPage}`,
     `format=json`,
