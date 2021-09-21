@@ -22,12 +22,12 @@ function getFlickrApiUrl(query) {
 // returns: url to the image. url structure:
 // https://live.staticflickr.com/{server-id}/{id}_{secret}_{size-suffix}.jpg
 function getFlickrImgUrl({ server, id, secret }) {
-  console.log('retrieved url: ', `https://live.staticflickr.com/${server}/${id}_${secret}.jpg`);
+  // console.log('retrieved url: ', `https://live.staticflickr.com/${server}/${id}_${secret}.jpg`);
   return `https://live.staticflickr.com/${server}/${id}_${secret}.jpg`;
 }
 
 function performFlickrSearch(query = 'trending') {
-  console.log('getFlickrApiUrl(query):', getFlickrApiUrl(query));
+  // console.log('getFlickrApiUrl(query):', getFlickrApiUrl(query));
   return axios.get(getFlickrApiUrl(query))
     .then(response => response.data.photos.photo)
     .then(photos => photos.map(photo => getFlickrImgUrl(photo)))
