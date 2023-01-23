@@ -76,8 +76,10 @@ class App extends Component {
   render() {
     // console.log('<App /> render triggered');
 
+    const basename = '/React-Gallery-App/';
+
     return (
-      <BrowserRouter>
+      <BrowserRouter basename={basename ? basename : ''}>
         <div className="container">
           <SearchForm handleSearch={this.handleSearch} />
           <Nav />
