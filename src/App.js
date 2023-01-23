@@ -122,7 +122,7 @@ class App extends Component {
             }} />
 
             <Route component={ (props) => {
-              console.log('props:', props);
+              // console.log('props:', props);
               return (
                 <h1>404 - The requested route is not available</h1>
               );
